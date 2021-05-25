@@ -25,3 +25,25 @@ A golang tool for viewing issues and pull requests on Open Source Repositiories 
 | terraform-aws-ssm-agent        |      0 |             0 |
 +--------------------------------+--------+---------------+
 ```
+
+## Usage
+
+To successfully request data from the Github Api a personal Github token is required. See docs [Here](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
+Set your token in `example-config.yml` and rename to `config.yml`
+
+From project root run `go run main.go`
+### Project Structure
+```
+tally-git/
+
+    ├── LICENSE
+    ├── README.md
+    ├── api/
+    ├── config/
+    ├── config.yml
+    ├── go.mod
+    ├── go.sum
+    ├── internal/
+    └── main.go
+```

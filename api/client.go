@@ -19,16 +19,6 @@ type Client struct {
 	Github *GithubService
 }
 
-type Option interface {
-	apply(c *Client) error
-}
-
-type clientFunc func(c *Client) error
-
-func (fn clientFunc) apply(c *Client) error {
-	return fn(c)
-}
-
 func NewClient(apikey string) (*Client, error) {
 	baseURL, err := url.Parse("https://api.github.com")
 	if err != nil {
