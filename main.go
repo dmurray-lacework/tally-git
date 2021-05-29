@@ -35,7 +35,7 @@ func init() {
 	}
 }
 
-func tableFormat(repos []api.Repo) [][]string {
+func tableFormat(repos []api.RepoResponse) [][]string {
 	data := [][]string{}
 	for _, r := range repos {
 		data = append(data, r.ToArray())
