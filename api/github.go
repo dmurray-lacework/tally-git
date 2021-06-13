@@ -46,9 +46,15 @@ func (gs *GithubService) GetPullRequests(repoName string) []PullRequestResponse 
 
 func (gs *GithubService) GetIssues(repoName string) []IssueResponse {
 	response := &[]IssueResponse{}
+	issues := &[]IssueResponse{}
 	apiPath := fmt.Sprintf(ISSUES_URL, repoName)
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
-	return *response
+	for _, issue := range *response {
+		if issue.PRLinks == (PullLinksResponse{}) {
+			*issues = append(*issues, issue)
+		}
+	}
+	return *issues
 }
 
 func (gs *GithubService) GetPRCount(repoName string) int {
@@ -97,14 +103,16 @@ type PullRequestResponse struct {
 }
 
 type IssueResponse struct {
-	Id        int             `json:"id"`
-	Url       string          `json:"html_url"`
-	State     string          `json:"state"`
-	Number    int             `json:"number"`
-	Title     string          `json:"title"`
-	Labels    []LabelResponse `json:"labels"`
-	CreatedAt string          `json:"created_at"`
-	UpdatedAt string          `json:"updated_at"`
+	Id        int               `json:"id"`
+	Repo      string            `json:"repo"`
+	Url       string            `json:"html_url"`
+	State     string            `json:"state"`
+	Number    int               `json:"number"`
+	Title     string            `json:"title"`
+	Labels    []LabelResponse   `json:"labels"`
+	CreatedAt string            `json:"created_at"`
+	UpdatedAt string            `json:"updated_at"`
+	PRLinks   PullLinksResponse `json:"pull_request"`
 }
 
 type LabelResponse struct {
@@ -119,6 +127,13 @@ type LabelResponse struct {
 type UserResponse struct {
 	Id    int    `json:"id"`
 	Login string `json:"login"`
+}
+
+type PullLinksResponse struct {
+	Url      string `json:"url"`
+	HtmlUrl  string `json:"html_url"`
+	DiffUrl  string `json:"diff_url"`
+	PatchUrl string `json:"patch_url"`
 }
 
 func (r *RepoResponse) ToArray() []string {
