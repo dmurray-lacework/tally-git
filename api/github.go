@@ -51,6 +51,7 @@ func (gs *GithubService) GetIssues(repoName string) []IssueResponse {
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
 	for _, issue := range *response {
 		if issue.PRLinks == (PullLinksResponse{}) {
+			issue.Repo = repoName
 			*issues = append(*issues, issue)
 		}
 	}
