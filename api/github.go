@@ -98,7 +98,7 @@ type GithubRepositoryResponse struct {
 type PullRequestResponse struct {
 	Id                int          `json:"id"`
 	Name              string       `json:"title"`
-	Repo              string       `json:"repo"`
+	Body              string       `json:"repo"`
 	Assignee          string       `json:"assignee"`
 	Url               string       `json:"html_url"`
 	State             string       `json:"state"`
@@ -106,6 +106,7 @@ type PullRequestResponse struct {
 	CreatedAt         string       `json:"created_at"`
 	UpdatedAt         string       `json:"updated_at"`
 	User              UserResponse `json:"user"`
+	Head              HeadResponse `json:"head"`
 }
 
 type IssueResponse struct {
@@ -133,6 +134,11 @@ type LabelResponse struct {
 type UserResponse struct {
 	Id    int    `json:"id"`
 	Login string `json:"login"`
+}
+
+type HeadResponse struct {
+	Id   int          `json:"id"`
+	Repo RepoResponse `json:"repo"`
 }
 
 type PullLinksResponse struct {
