@@ -96,11 +96,16 @@ type GithubRepositoryResponse struct {
 }
 
 type PullRequestResponse struct {
-	Id        int    `json:"id"`
-	Url       string `json:"html_url"`
-	State     string `json:"state"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	Id                int          `json:"id"`
+	Name              string       `json:"title"`
+	Repo              string       `json:"repo"`
+	Assignee          string       `json:"assignee"`
+	Url               string       `json:"html_url"`
+	State             string       `json:"state"`
+	AuthorAssociation string       `json:"author_association"`
+	CreatedAt         string       `json:"created_at"`
+	UpdatedAt         string       `json:"updated_at"`
+	User              UserResponse `json:"user"`
 }
 
 type IssueResponse struct {
