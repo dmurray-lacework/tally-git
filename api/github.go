@@ -31,6 +31,7 @@ func (gs *GithubService) GetRepos() []RepoResponse {
 			repo.PullRequests = gs.GetPRCount(repo.Name)
 			repo.IssueDetails = gs.GetIssues(repo.Name)
 			repo.PullRequestDetails = gs.GetPullRequests(repo.Name)
+			repo.Release = gs.GetLatestVersion(repo.Name)
 			openSourceRepos = append(openSourceRepos, repo)
 		}
 	}
@@ -40,6 +41,13 @@ func (gs *GithubService) GetRepos() []RepoResponse {
 func (gs *GithubService) GetPullRequests(repoName string) []PullRequestResponse {
 	response := &[]PullRequestResponse{}
 	apiPath := fmt.Sprintf(PR_URL, repoName)
+	gs.client.RequestDecoder("GET", apiPath, nil, response)
+	return *response
+}
+
+func (gs *GithubService) GetLatestVersion(repoName string) ReleaseResponse {
+	response := &ReleaseResponse{}
+	apiPath := fmt.Sprintf(LATEST_RELEASES_URL, repoName)
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
 	return *response
 }
@@ -83,6 +91,7 @@ type RepoResponse struct {
 	Description        string                `json:"description"`
 	IssueDetails       []IssueResponse       `json:"issue_details"`
 	PullRequestDetails []PullRequestResponse `json:"pull_request_details"`
+	Release            ReleaseResponse       `json:"release"`
 }
 
 type GithubRepositoryResponse struct {
@@ -93,13 +102,14 @@ type GithubRepositoryResponse struct {
 	Language    string `json:"language"`
 	Url         string `json:"url"`
 	Description string `json:"description"`
+	Version     string `json:"version"`
 }
 
 type PullRequestResponse struct {
 	Id                int          `json:"id"`
 	Name              string       `json:"title"`
 	Body              string       `json:"repo"`
-	Assignee          string       `json:"assignee"`
+	Assignee          string       `json:"assignee,omitempty"`
 	Url               string       `json:"html_url"`
 	State             string       `json:"state"`
 	AuthorAssociation string       `json:"author_association"`
@@ -146,6 +156,15 @@ type PullLinksResponse struct {
 	HtmlUrl  string `json:"html_url"`
 	DiffUrl  string `json:"diff_url"`
 	PatchUrl string `json:"patch_url"`
+}
+
+type ReleaseResponse struct {
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	Tag       string `json:"tag_name"`
+	Published string `json:"published"`
+	Url       string `json:"html_url"`
+	Body      string `json:"body"`
 }
 
 func (r *RepoResponse) ToArray() []string {
