@@ -32,6 +32,9 @@ func (gs *GithubService) GetRepos() []RepoResponse {
 			repo.IssueDetails = gs.GetIssues(repo.Name)
 			repo.PullRequestDetails = gs.GetPullRequests(repo.Name)
 			repo.Release = gs.GetLatestVersion(repo.Name)
+			if repo.Release.Published != "" {
+				repo.Commits = gs.GetLatestCommits(repo.Name, repo.Release.Published)
+			}
 			openSourceRepos = append(openSourceRepos, repo)
 		}
 	}
@@ -48,6 +51,13 @@ func (gs *GithubService) GetPullRequests(repoName string) []PullRequestResponse 
 func (gs *GithubService) GetLatestVersion(repoName string) ReleaseResponse {
 	response := &ReleaseResponse{}
 	apiPath := fmt.Sprintf(LATEST_RELEASES_URL, repoName)
+	gs.client.RequestDecoder("GET", apiPath, nil, response)
+	return *response
+}
+
+func (gs *GithubService) GetLatestCommits(repoName string, published string) []CommitsResponse {
+	response := &[]CommitsResponse{}
+	apiPath := fmt.Sprintf(LATEST_COMMITS_URL, repoName, published)
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
 	return *response
 }
@@ -92,6 +102,7 @@ type RepoResponse struct {
 	IssueDetails       []IssueResponse       `json:"issue_details"`
 	PullRequestDetails []PullRequestResponse `json:"pull_request_details"`
 	Release            ReleaseResponse       `json:"release"`
+	Commits            []CommitsResponse     `json:"commits"`
 }
 
 type GithubRepositoryResponse struct {
@@ -158,11 +169,28 @@ type PullLinksResponse struct {
 	PatchUrl string `json:"patch_url"`
 }
 
+type CommitsResponse struct {
+	Sha     string `json:"sha"`
+	HtmlUrl string `json:"html_url"`
+	Commit  Commit `json:"commit"`
+}
+
+type Commit struct {
+	Message      string `json:"message"`
+	Author       Author `json:"author"`
+	CommentCount int    `json:"comment_count"`
+}
+type Author struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Date  string `json:"date"`
+}
+
 type ReleaseResponse struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	Tag       string `json:"tag_name"`
-	Published string `json:"published"`
+	Published string `json:"published_at"`
 	Url       string `json:"html_url"`
 	Body      string `json:"body"`
 }

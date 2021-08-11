@@ -5,4 +5,5 @@ const (
 	PR_URL              = "repos/lacework/%s/pulls?state=open"
 	ISSUES_URL          = "repos/lacework/%s/issues?state=open"
 	LATEST_RELEASES_URL = "repos/lacework/%s/releases/latest"
+	LATEST_COMMITS_URL  = "repos/lacework/%s/commits?since=%s"
 )
