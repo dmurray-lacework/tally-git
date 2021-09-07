@@ -43,12 +43,17 @@ func (gs *GithubService) GetRepos() []RepoResponse {
 
 func (gs *GithubService) GetPullRequests(repoName string) []PullRequestResponse {
 	response := &[]PullRequestResponse{}
+	pullRequests := []PullRequestResponse{}
 	apiPath := fmt.Sprintf(PR_URL, repoName)
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
+
 	for _, r := range *response {
-		r.Reviews = append(r.Reviews, gs.GetReviews(repoName, r.Number)...)
+		pr := PullRequestResponse(r)
+		pr.Reviews = append(pr.Reviews, gs.GetReviews(repoName, r.Number)...)
+		pullRequests = append(pullRequests, pr)
 	}
-	return *response
+
+	return pullRequests
 }
 
 func (gs *GithubService) GetLatestVersion(repoName string) ReleaseResponse {
