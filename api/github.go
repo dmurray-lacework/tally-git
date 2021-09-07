@@ -45,6 +45,9 @@ func (gs *GithubService) GetPullRequests(repoName string) []PullRequestResponse 
 	response := &[]PullRequestResponse{}
 	apiPath := fmt.Sprintf(PR_URL, repoName)
 	gs.client.RequestDecoder("GET", apiPath, nil, response)
+	for _, r := range *response {
+		r.Reviews = append(r.Reviews, gs.GetReviews(repoName, r.Number)...)
+	}
 	return *response
 }
 
@@ -91,6 +94,13 @@ func (gs *GithubService) GetPRCount(repoName string) int {
 	return openPRs
 }
 
+func (gs *GithubService) GetReviews(repoName string, pullNumber int) []ReviewResponse {
+	response := &[]ReviewResponse{}
+	apiPath := fmt.Sprintf(REVIEWS_URL, repoName, pullNumber)
+	gs.client.RequestDecoder("GET", apiPath, nil, response)
+	return *response
+}
+
 type RepoResponse struct {
 	Name               string                `json:"name"`
 	Issues             int                   `json:"issues"`
@@ -117,17 +127,29 @@ type GithubRepositoryResponse struct {
 }
 
 type PullRequestResponse struct {
+	Id                int              `json:"id"`
+	Name              string           `json:"title"`
+	Number            int              `json:"number"`
+	Body              string           `json:"repo"`
+	Assignee          string           `json:"assignee,omitempty"`
+	Url               string           `json:"html_url"`
+	State             string           `json:"state"`
+	AuthorAssociation string           `json:"author_association"`
+	CreatedAt         string           `json:"created_at"`
+	UpdatedAt         string           `json:"updated_at"`
+	User              UserResponse     `json:"user"`
+	Head              HeadResponse     `json:"head"`
+	Reviews           []ReviewResponse `json:"reviews,omitempty"`
+}
+
+type ReviewResponse struct {
 	Id                int          `json:"id"`
-	Name              string       `json:"title"`
-	Body              string       `json:"repo"`
-	Assignee          string       `json:"assignee,omitempty"`
-	Url               string       `json:"html_url"`
 	State             string       `json:"state"`
+	Body              string       `json:"body"`
+	Url               string       `json:"html_url"`
 	AuthorAssociation string       `json:"author_association"`
-	CreatedAt         string       `json:"created_at"`
-	UpdatedAt         string       `json:"updated_at"`
+	SubmittedAt       string       `json:"submitted_at"`
 	User              UserResponse `json:"user"`
-	Head              HeadResponse `json:"head"`
 }
 
 type IssueResponse struct {
