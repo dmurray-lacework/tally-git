@@ -11,7 +11,7 @@ type GithubService struct {
 	client *Client
 }
 
-var TECH_ALLY_REPOS []string = []string{"go-sdk", "terraform-", "chef-lacework", "homebrew-tap", "circleci-orb", "lw-scanner-action"}
+var TECH_ALLY_REPOS []string = []string{"go-sdk", "python-sdk", "terraform-", "chef-lacework", "homebrew-tap", "circleci-orb", "lw-scanner-action"}
 
 func (gs *GithubService) GetRepos() []RepoResponse {
 	response := &[]GithubRepositoryResponse{}
