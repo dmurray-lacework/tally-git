@@ -10,7 +10,7 @@ import (
 type GithubService struct {
 	client *Client
 }
-
+// Repos
 var TECH_ALLY_REPOS []string = []string{"go-sdk", "python-sdk", "terraform-", "chef-lacework", "homebrew-tap", "circleci-orb", "lw-scanner-action"}
 
 func (gs *GithubService) GetRepos() []RepoResponse {
